@@ -96,6 +96,10 @@ GLuint createProgram( const std::initializer_list<GLSLFile> & glslFiles )try{
         for (const auto &shader:shaders) {glCompileShader(shader.value);}
     }
 
+    {/*check build state*/
+
+    }
+
     class Program {
         Program&operator=(const Program &)=delete;
         Program&operator=(Program &&)=delete;
@@ -109,7 +113,7 @@ GLuint createProgram( const std::initializer_list<GLSLFile> & glslFiles )try{
 
     Program program{ glCreateProgram() };
 
-    {/*attch shader*/
+    {/*attach shader*/
         for (const auto &shader:shaders) {glAttachShader(program.value,shader.value);}
     }
 
@@ -141,11 +145,11 @@ inline QString type2string(GLenum type){
         case GL_DEBUG_TYPE_ERROR:return"GL_DEBUG_TYPE_ERROR";
         case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:return "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR";
         case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:return"GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR";
-        case GL_DEBUG_TYPE_PORTABILITY:return "GL_DEBUG_TYPE_PORTABILITY"; 
+        case GL_DEBUG_TYPE_PORTABILITY:return "GL_DEBUG_TYPE_PORTABILITY";
         case GL_DEBUG_TYPE_PERFORMANCE:return "GL_DEBUG_TYPE_PERFORMANCE";
-        case GL_DEBUG_TYPE_MARKER:return"GL_DEBUG_TYPE_MARKER"; 
+        case GL_DEBUG_TYPE_MARKER:return"GL_DEBUG_TYPE_MARKER";
         case GL_DEBUG_TYPE_PUSH_GROUP:return"GL_DEBUG_TYPE_PUSH_GROUP";
-        case GL_DEBUG_TYPE_POP_GROUP:return"GL_DEBUG_TYPE_POP_GROUP"; 
+        case GL_DEBUG_TYPE_POP_GROUP:return"GL_DEBUG_TYPE_POP_GROUP";
         case GL_DEBUG_TYPE_OTHER:return"GL_DEBUG_TYPE_OTHER";
     }
     return"unknow type:0x"+QString::number(type,16);

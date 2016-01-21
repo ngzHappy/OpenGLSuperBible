@@ -37,6 +37,6 @@ LIBS+=-lXmu -lXi -lGL -lXext -lX11
 ##https://github.com/openglsuperbible/sb7code
 ##http://www.openglsuperbible.com
 ##http://www.glfw.org/download.html
-
+##http://openglsuperbible.com/files/superbible7-media.zip
 
 

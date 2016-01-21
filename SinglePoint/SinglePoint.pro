@@ -21,8 +21,8 @@ DEFINES *= THIS_PROJECT_PWD=\\\"$$PWD\\\"
 DEFINES *= THIS_PROJECT_LOCALCODEC=\\\"$$LOCAL_LANGUAGE_\\\"
 
 DISTFILES += $$PWD/glsl/readme.txt
-DISTFILES += $$PWD/glsl/v.vert
-DISTFILES += $$PWD/glsl/f.frag
+DISTFILES += $$PWD/glsl/SinglePoint.v.vert
+DISTFILES += $$PWD/glsl/SinglePoint.f.frag
 DISTFILES += $$PWD/images/readme.txt
 
 

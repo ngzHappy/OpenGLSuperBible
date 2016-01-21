@@ -11,8 +11,8 @@ public:
     ThisData(){
         glCreateVertexArrays(1,&vao);
         program = createProgram({
-            {GL_VERTEX_SHADER,readGLSLFile("glsl:v.vert") },
-            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:f.frag")}
+            {GL_VERTEX_SHADER,readGLSLFile("glsl:SinglePoint.v.vert") },
+            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SinglePoint.f.frag")}
         });
     }
     ~ThisData(){
