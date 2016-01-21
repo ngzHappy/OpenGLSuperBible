@@ -5,7 +5,7 @@ SUBDIRS += PrintOpenGLVersion
 SUBDIRS += PrintOpenGLVersionWithTimer
 SUBDIRS += SetSimpleDebug
 SUBDIRS += SetSimpleDebugTest
-
+SUBDIRS += SimpleClearColor
 
 
 
