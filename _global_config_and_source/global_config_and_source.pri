@@ -33,3 +33,7 @@ linux:{
 LIBS+=-lXmu -lXi -lGL -lXext -lX11
 }
 
+##reference:
+##https://github.com/openglsuperbible/sb7code
+##
+
