@@ -9,7 +9,7 @@ SUBDIRS += SimpleClearColor
 SUBDIRS += SimpleClearColorTimer
 SUBDIRS += SinglePoint
 SUBDIRS += SingleTriangle
-
+SUBDIRS += SimpleVertexAttribute
 
 
 
