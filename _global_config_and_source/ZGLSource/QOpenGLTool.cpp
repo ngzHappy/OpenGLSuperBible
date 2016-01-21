@@ -8,7 +8,16 @@
 #include <QTextStream>
 #include <vector>
 #include <QMessageBox>
+#include <cstdlib>
+#include <ctime>
 
+namespace {
+class InitRand {
+public:
+    InitRand() { std::srand( int( std::time(0) ) ); }
+};
+InitRand __InitRand;
+}
 
 extern void _i_qInitializeQGLWidget(QGLWidget *glWidget);
 
