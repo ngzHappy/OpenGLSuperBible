@@ -2,6 +2,7 @@
 #include "MainWindow.hpp"
 #include <QDebug>
 #include <cassert>
+#include <cstdlib>
 
 class MainWindow::ThisData {
 public:
@@ -17,11 +18,15 @@ MainWindow::~MainWindow(){
     delete thisData;
 }
 
-void MainWindow::paintGL() {}
+void MainWindow::paintGL() {
+    auto getRandColor=[]()->GLfloat{return (rand()%1000)/1000.0f;};
+    glClearColor(getRandColor(),getRandColor(),getRandColor(),1);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
 void MainWindow::initializeGL() {
     if(thisData==nullptr){
         setSimpleCallbackFunction();
-        const_cast<ThisData *>(thisData)=new ThisData;
+        const_cast<ThisData * &>(thisData)=new ThisData;
         assert(thisData);
     }
 }

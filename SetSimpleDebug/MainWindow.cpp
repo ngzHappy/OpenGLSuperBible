@@ -21,7 +21,7 @@ void MainWindow::paintGL() {}
 void MainWindow::initializeGL() {
     if(thisData==nullptr){
         setSimpleCallbackFunction();
-        const_cast<ThisData *>(thisData)=new ThisData;
+        const_cast<ThisData * &>(thisData)=new ThisData;
         assert(thisData);
     }
 }
