@@ -50,6 +50,7 @@ void MainWindow::resizeGL(int w, int h) {glViewport(0,0,w,h);}
 
 void MainWindow::timerEvent(QTimerEvent *e) {
     QGLWidget::timerEvent(e);
+    updateGL();
 }
 
 
