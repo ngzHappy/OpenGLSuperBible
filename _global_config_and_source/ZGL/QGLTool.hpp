@@ -26,6 +26,8 @@ class GLSLFile{
 public:
     GLSLShaderType type;
     QString data ;
+    GLSLFile(GLSLShaderType t,QString d):type(t),data(std::move(d)) {}
+    GLSLFile(GLuint t,QString d):type(static_cast<GLSLShaderType>(t)),data(std::move(d)) {}
 };
 
 extern bool qGLWidgetInitializeGlew(QGLWidget * const ptr);

@@ -7,7 +7,7 @@ SUBDIRS += SetSimpleDebug
 SUBDIRS += SetSimpleDebugTest
 SUBDIRS += SimpleClearColor
 SUBDIRS += SimpleClearColorTimer
-
+SUBDIRS += SinglePoint
 
 
 
