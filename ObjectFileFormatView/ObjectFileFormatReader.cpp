@@ -33,27 +33,50 @@ ObjectFileFormatReader::read( const QString & fileName ){
         std::size_t points_size_=0;
         std::size_t faces_size_=0;
 
-        stream>>points_size_;
-        stream>>faces_size_;
+        {
+            QString line_=stream.readLine();
+            QTextStream tmpstream(&line_);
+            tmpstream>>points_size_;
+            tmpstream>>faces_size_;
+        }
 
         if ((stream.atEnd()==false)
             &&(faces_size_>0)
             &&(points_size_>0)) {
             ans=std::make_shared<ObjectFileFormat>();
-
+            auto * ansPointer=ans.get();
             {/*read points*/
                 auto & points_=ans->points;
                 points_.reserve(points_size_);
                 {/*read points*/
                     GLfloat x,y,z;
+
+                    bool xMax_set=false;bool xMin_set=false;
+                    bool zMax_set=false;bool zMin_set=false;
+                    bool yMax_set=false;bool yMin_set=false;
+                    
                     std::size_t current_point_=0;
                     while ((stream.atEnd()==false)&&(current_point_<points_size_)) {
-                        stream>>x;
-                        stream>>y;
-                        stream>>z;
+                        stream>>x; 
+                        stream>>y; 
+                        stream>>z; 
                         if (stream.status()==QTextStream::ReadCorruptData) {
                             return nullptr;
                         }
+
+                        if (zMax_set) { if (z>ansPointer->zMax) { ansPointer->zMax=z; } }
+                        else { ansPointer->zMax=z; zMax_set=true; }
+                        if (zMin_set) { if (z<ansPointer->zMin) { ansPointer->zMin=z; } }
+                        else { ansPointer->zMin=z; zMin_set=true; }
+                        if (yMax_set) { if (y>ansPointer->yMax) { ansPointer->yMax=y; } }
+                        else { ansPointer->yMax=y; yMax_set=true; }
+                        if (yMin_set) { if (y<ansPointer->yMin) { ansPointer->yMin=y; } }
+                        else { ansPointer->yMin=y; yMin_set=true; }
+                        if (xMax_set) { if (x>ansPointer->xMax) { ansPointer->xMax=x; } }
+                        else { ansPointer->xMax=x; xMax_set=true; }
+                        if (xMin_set) { if (x<ansPointer->xMin) { ansPointer->xMin=x; } }
+                        else { ansPointer->xMin=x; xMin_set=true; }
+
                         points_.emplace_back(x,y,z);
                         ++current_point_;
                     }
@@ -68,6 +91,7 @@ ObjectFileFormatReader::read( const QString & fileName ){
                     std::size_t current_face_=0;
                     GLuint tmp;
                     while ((stream.atEnd()==false)&&(current_face_<faces_size_)) {
+                        line_face_.clear();
                         GLuint n_points=0;
                         stream>>n_points;
                         if (stream.status()==QTextStream::ReadCorruptData) {

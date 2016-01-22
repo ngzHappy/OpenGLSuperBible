@@ -7,6 +7,7 @@
 
 class ObjectFileFormat{
 public:
+
     struct alignas(GLfloat) Point3D{
         GLfloat x;
         GLfloat y;
@@ -25,6 +26,13 @@ public:
 
     std::vector<Point3D> points ;
     std::vector<Face> faces;
+
+    GLfloat xMax=0;
+    GLfloat yMax=0;
+    GLfloat zMax=0;
+    GLfloat zMin=0;
+    GLfloat yMin=0;
+    GLfloat xMin=0;
 };
 
 class ObjectFileFormatReader

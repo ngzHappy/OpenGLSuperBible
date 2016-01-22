@@ -31,8 +31,9 @@ int main(int argc, char *argv[]){
         const QStringList search_path_base{ app.applicationDirPath(),QFile::decodeName(THIS_PROJECT_PWD) };
         QDir::setSearchPaths("images",addSearchPath(search_path_base,"images"));
         QDir::setSearchPaths("glsl",addSearchPath(search_path_base,"glsl"));
+        QDir::setSearchPaths("obj3d",addSearchPath(search_path_base,"obj3d"));
     }
-    
+
     MainWindow window;
     window.show();
 
