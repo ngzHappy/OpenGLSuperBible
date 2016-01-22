@@ -19,7 +19,7 @@ SUBDIRS += SimpleGeometryTriangle
 SUBDIRS += SimpleBuffer
 SUBDIRS += SimpleVertexArrayObject
 SUBDIRS += SimpleVertexArrayObject_1
-
+SUBDIRS += ObjectFileFormatView
 
 
 
