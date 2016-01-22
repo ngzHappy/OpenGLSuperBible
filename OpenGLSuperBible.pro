@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS += BaseTest
+SUBDIRS += BaseTest \
+    GLMTest
 SUBDIRS += PrintOpenGLVersion
 SUBDIRS += PrintOpenGLVersionWithTimer
 SUBDIRS += SetSimpleDebug

@@ -10,6 +10,9 @@ CONFIG *= _DEBUG
 CONFIG *= NDEBUG
 }
 
+DEFINES *= GLM_FORCE_CXX14
+DEFINES *= GLM_SWIZZLE
+
 DEFINES *= GLEW_STATIC
 SOURCES += $$PWD/ZGLSource/glew.c###glew
 SOURCES += $$PWD/ZGLSource/QGLWidgetInitializeGlew.cpp###init glew
@@ -33,6 +36,8 @@ linux:{
 LIBS+=-lXmu -lXi -lGL -lXext -lX11
 }
 
+
+##https://github.com/g-truc/glm
 ##reference:
 ##https://github.com/openglsuperbible/sb7code
 ##http://www.openglsuperbible.com
