@@ -10,9 +10,11 @@ CONFIG *= _DEBUG
 CONFIG *= NDEBUG
 }
 
+##GLM
 DEFINES *= GLM_FORCE_CXX14
 DEFINES *= GLM_SWIZZLE
 
+##GLEW
 DEFINES *= GLEW_STATIC
 SOURCES += $$PWD/ZGLSource/glew.c###glew
 SOURCES += $$PWD/ZGLSource/QGLWidgetInitializeGlew.cpp###init glew
