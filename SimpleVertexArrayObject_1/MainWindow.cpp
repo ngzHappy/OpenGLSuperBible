@@ -10,7 +10,7 @@ public:
     GLuint vao = 0;
     GLuint buffer = 0;
 
-    struct alignas(GLfloat) Vertex{
+    struct alignas( alignof(GLfloat)*8 ) Vertex{
         union{
             GLfloat color[4];
             struct{ GLfloat r,g,b,a; };
@@ -19,7 +19,7 @@ public:
             GLfloat position[4];
             struct{ GLfloat x,y,z,w; };
         };
-        template< 
+        template<
             typename _0_T,typename _1_T,typename _2_T,typename _3_T ,
             typename _4_T,typename _5_T,typename _6_T,typename _7_T
         >
