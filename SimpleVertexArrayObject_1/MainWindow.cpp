@@ -9,22 +9,52 @@ public:
     GLuint program = 0;
     GLuint vao = 0;
     GLuint buffer = 0;
+
+    struct alignas(GLfloat) Vertex{
+        union{
+            GLfloat color[4];
+            struct{ GLfloat r,g,b,a; };
+        };
+        union{
+            GLfloat position[4];
+            struct{ GLfloat x,y,z,w; };
+        };
+        template< 
+            typename _0_T,typename _1_T,typename _2_T,typename _3_T ,
+            typename _4_T,typename _5_T,typename _6_T,typename _7_T
+        >
+        constexpr Vertex(_0_T&&_r,_1_T&&_g,_2_T&&_b,_3_T&&_a,
+               _4_T&&_x,_5_T&&_y,_6_T&&_z,_7_T&&_w
+               ):r(_r),g(_g),b(_b),a(_a),
+            x(_x),y(_y),z(_z),w(_w)
+        {}
+    };
+
     __ThisData(){
         glCreateVertexArrays(1,&vao);
         glCreateBuffers(1,&buffer);
-        alignas(GLfloat) constexpr const static GLfloat data_[]{
-                0,0.5f,0,1,
-            -0.5f,-.5f,0,1,
-             0.5f,-.5f,0,1,
+        constexpr const static Vertex data_[]{
+            {1,0,0,1,    0,0.5f,0,1,},
+            {0,1,0,1,-0.5f,-.5f,0,1,},
+            {0,0,1,1, 0.5f,-.5f,0,1,},
         };
         glNamedBufferData(buffer,sizeof(data_),data_,GL_STATIC_DRAW);
+
+        /*0 color*/
         glEnableVertexArrayAttrib(vao,0);
-        glVertexArrayVertexBuffer(vao,0,buffer,0,sizeof(data_)/3);
+        glVertexArrayVertexBuffer(vao,0,buffer,0,sizeof(Vertex));
         glVertexArrayAttribBinding(vao,0,0);
-        glVertexArrayAttribFormat(vao,0,4,GL_FLOAT,false,0);
+        glVertexArrayAttribFormat(vao,0,4,GL_FLOAT,false,offsetof(Vertex,color));
+
+        /*1 position*/
+        glEnableVertexArrayAttrib(vao,1);
+        glVertexArrayVertexBuffer(vao,1,buffer,0,sizeof(Vertex));
+        glVertexArrayAttribBinding(vao,1,1);
+        glVertexArrayAttribFormat(vao,1,4,GL_FLOAT,false,offsetof(Vertex,position));
+
         program = createProgram({
-            {GL_VERTEX_SHADER,readGLSLFile("glsl:SimpleVertexArrayObject.v.vert") },
-            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SimpleVertexArrayObject.f.frag")}
+            {GL_VERTEX_SHADER,readGLSLFile("glsl:SimpleVertexArrayObject_1.v.vert") },
+            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SimpleVertexArrayObject_1.f.frag")}
         });
     }
     ~__ThisData(){

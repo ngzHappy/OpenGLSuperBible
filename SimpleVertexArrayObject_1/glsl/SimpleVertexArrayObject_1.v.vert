@@ -1,9 +1,13 @@
 ﻿#version 450
 
-layout(location=0) in vec4 inPosition;
+layout(location=1) in vec4 inPosition;
+layout(location=0) in vec4 inColor;
+
+out VS_OUT{ vec4 color ; } outStruct;
 
 void main(){
     gl_Position = inPosition ;
+	outStruct.color = inColor;
 }
 
 /*
