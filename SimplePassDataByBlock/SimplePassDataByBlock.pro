@@ -7,7 +7,7 @@ QT += opengl
 CONFIG += c++14
 CONFIG += console
 
-TARGET = SinglePassData
+TARGET = SimplePassDataByBlock
 TEMPLATE = app
 
 

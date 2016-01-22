@@ -7,7 +7,7 @@ QT += opengl
 CONFIG += c++14
 CONFIG += console
 
-TARGET = SimplePassData
+TARGET = SimpleTessellationTriangle
 TEMPLATE = app
 
 
@@ -21,8 +21,10 @@ DEFINES *= THIS_PROJECT_PWD=\\\"$$PWD\\\"
 DEFINES *= THIS_PROJECT_LOCALCODEC=\\\"$$LOCAL_LANGUAGE_\\\"
 
 DISTFILES += $$PWD/glsl/readme.txt
-DISTFILES += $$PWD/glsl/SimplePassData.v.vert
-DISTFILES += $$PWD/glsl/SimplePassData.f.frag
+DISTFILES += $$PWD/glsl/SimpleTessellationTriangle.v.vert
+DISTFILES += $$PWD/glsl/SimpleTessellationTriangle.t.tcs
+DISTFILES += $$PWD/glsl/SimpleTessellationTriangle.t.tes
+DISTFILES += $$PWD/glsl/SimpleTessellationTriangle.f.frag
 DISTFILES += $$PWD/images/readme.txt
 
 
