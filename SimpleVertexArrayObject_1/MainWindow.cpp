@@ -11,11 +11,11 @@ public:
     GLuint buffer = 0;
 
     struct alignas( alignof(GLfloat)*8 ) Vertex{
-        union{
+        union alignas(GLfloat){
             GLfloat color[4];
             struct{ GLfloat r,g,b,a; };
         };
-        union{
+        union alignas(GLfloat){
             GLfloat position[4];
             struct{ GLfloat x,y,z,w; };
         };
