@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 
+SUBDIRS += CPP11AlignTest
 SUBDIRS += BaseTest
 SUBDIRS += GLMTest
 SUBDIRS += PrintOpenGLVersion
