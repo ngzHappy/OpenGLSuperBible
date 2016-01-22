@@ -3,19 +3,19 @@
 #include <QDebug>
 #include <cassert>
 
-class MainWindow::ThisData {
+class MainWindow::__ThisData {
 public:
     unsigned int timerStamp=0;
     GLuint program = 0;
     GLuint vao = 0;
-    ThisData(){
+    __ThisData(){
         glCreateVertexArrays(1,&vao);
         program = createProgram({
             {GL_VERTEX_SHADER,readGLSLFile("glsl:SingleTriangle.v.vert") },
             {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SingleTriangle.f.frag")}
         });
     }
-    ~ThisData(){
+    ~__ThisData(){
         glDeleteProgram(program);
         glDeleteVertexArrays(1,&vao);
     }
@@ -41,7 +41,7 @@ void MainWindow::paintGL() {
 void MainWindow::initializeGL() {
     if(thisData==nullptr){
         setSimpleCallbackFunction();
-        const_cast<ThisData * &>(thisData)=new ThisData;
+        const_cast<__ThisData * &>(thisData)=new __ThisData;
         assert(thisData);
     }
 }
