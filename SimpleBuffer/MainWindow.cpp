@@ -31,6 +31,7 @@ void MainWindow::initializeGL(){
         startTimer(1000);
     }
 }
+
 void MainWindow::paintGL(){
     GLuint buffer = thisData->buffer ;
 

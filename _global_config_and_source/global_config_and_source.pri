@@ -1,3 +1,4 @@
+##you must set the local language codec
 win32{
 LOCAL_LANGUAGE_ = GBK
 }else{
