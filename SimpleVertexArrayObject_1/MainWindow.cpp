@@ -10,12 +10,12 @@ public:
     GLuint vao = 0;
     GLuint buffer = 0;
 
-    struct alignas( alignof(GLfloat)*8 ) Vertex{
-        union alignas(GLfloat){
+    struct alignas( GLfloat ) Vertex{
+        union {
             GLfloat color[4];
             struct{ GLfloat r,g,b,a; };
         };
-        union alignas(GLfloat){
+        union {
             GLfloat position[4];
             struct{ GLfloat x,y,z,w; };
         };
@@ -39,7 +39,7 @@ public:
             {0,0,1,1, 0.5f,-.5f,0,1,},
         };
         glNamedBufferData(buffer,sizeof(data_),data_,GL_STATIC_DRAW);
-
+         
         /*0 color*/
         glEnableVertexArrayAttrib(vao,0);
         glVertexArrayVertexBuffer(vao,0,buffer,0,sizeof(Vertex));
