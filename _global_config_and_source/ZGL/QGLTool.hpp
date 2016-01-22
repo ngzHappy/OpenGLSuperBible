@@ -2,7 +2,7 @@
 #define __HPP__QGLTOOL__HPP__
 
 #include "glew.h"
-#include <cstddef>
+#include <cstddef>/*offset*/
 #include <cstdlib>
 #include <utility>
 #include <memory>
