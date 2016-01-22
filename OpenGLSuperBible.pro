@@ -17,7 +17,7 @@ SUBDIRS += SimplePassDataByBlock
 SUBDIRS += SimpleTessellationTriangle
 SUBDIRS += SimpleGeometryTriangle
 SUBDIRS += SimpleBuffer
-
+SUBDIRS += SimpleVertexArrayObject
 
 
 
