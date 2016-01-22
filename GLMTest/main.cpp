@@ -6,7 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 // glm::to_string
 #include <glm/gtx/string_cast.hpp>
-
+// glm::value_ptr
+#include <glm/gtc/type_ptr.hpp>
 int main(int argc, char *argv[])
 {
 
@@ -22,6 +23,8 @@ int main(int argc, char *argv[])
         9,10,11,12,
         13,14,15,16
         );
+
+    glm::value_ptr( mat4 );
 
     std::cout
         <<to_string( mat4 )

@@ -1,3 +1,4 @@
 *.user
 _global_config_and_source/glm/CMakeLists.txt
 _global_config_and_source/OpengGL45Docs/~$openglAPI.xlsx
+_global_config_and_source/GLMDocs/~$glm.docx

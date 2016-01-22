@@ -138,6 +138,7 @@ void MainWindow::keyPressEvent(QKeyEvent * e) {
     const static auto rotate_step=0.3f;
 
     switch (e->key()) {
+        case Qt::Key_O:
         case Qt::Key_F: {
             QString fileName=QFileDialog::getOpenFileName(
                 this,
@@ -148,12 +149,30 @@ void MainWindow::keyPressEvent(QKeyEvent * e) {
             if (fileName.isEmpty()) { return; }
             this->setObjectFileFormat(fileName);
         } break;
-        case Qt::Key_Left: {thisData->mvp=glm::rotate(glm::mat4(),rotate_step,left_right_axis)*thisData->mvp; updateGL(); } break;
-        case Qt::Key_Right: {thisData->mvp=glm::rotate(glm::mat4(),-rotate_step,left_right_axis)*thisData->mvp; updateGL(); }break;
-        case Qt::Key_Up: {thisData->mvp=glm::rotate(glm::mat4(),rotate_step,up_down_axis)*thisData->mvp; updateGL(); }break;
-        case Qt::Key_Down: {thisData->mvp=glm::rotate(glm::mat4(),-rotate_step,up_down_axis)*thisData->mvp; updateGL(); }break;
-        case Qt::Key_PageDown: {thisData->mvp=glm::rotate(glm::mat4(),rotate_step,page_up_down_axis)*thisData->mvp; updateGL(); }break;
-        case Qt::Key_PageUp: {thisData->mvp=glm::rotate(glm::mat4(),-rotate_step,page_up_down_axis)*thisData->mvp; updateGL(); }break;
+        case Qt::Key_Left: {
+            const static auto rotate_=glm::rotate(glm::mat4(),rotate_step,left_right_axis);
+            thisData->mvp=rotate_*thisData->mvp; updateGL(); 
+        } break;
+        case Qt::Key_Right: {
+            const static auto rotate_=glm::rotate(glm::mat4(),-rotate_step,left_right_axis);
+            thisData->mvp=rotate_*thisData->mvp; updateGL(); 
+        }break;
+        case Qt::Key_Up: {
+            const static auto rotate_=glm::rotate(glm::mat4(),rotate_step,up_down_axis);
+            thisData->mvp=rotate_*thisData->mvp; updateGL(); 
+        }break;
+        case Qt::Key_Down: {
+            const static auto rotate_=glm::rotate(glm::mat4(),-rotate_step,up_down_axis);
+            thisData->mvp=rotate_*thisData->mvp; updateGL(); 
+        }break;
+        case Qt::Key_PageDown: {
+            const static auto rotate_=glm::rotate(glm::mat4(),rotate_step,page_up_down_axis);
+            thisData->mvp=rotate_*thisData->mvp; updateGL(); 
+        }break;
+        case Qt::Key_PageUp: {
+            const static auto rotate_=glm::rotate(glm::mat4(),-rotate_step,page_up_down_axis);
+            thisData->mvp=rotate_*thisData->mvp; updateGL();
+        }break;
         default:break;
     }
 }
