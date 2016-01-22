@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS += BaseTest \
-    GLMTest
+SUBDIRS += BaseTest
+SUBDIRS += GLMTest
 SUBDIRS += PrintOpenGLVersion
 SUBDIRS += PrintOpenGLVersionWithTimer
 SUBDIRS += SetSimpleDebug
@@ -11,8 +11,8 @@ SUBDIRS += SimpleClearColorTimer
 SUBDIRS += SinglePoint
 SUBDIRS += SingleTriangle
 SUBDIRS += SimpleVertexAttribute
-
-
+SUBDIRS += SimplePassData
+SUBDIRS += SimplePassDataByBlock
 
 
 
