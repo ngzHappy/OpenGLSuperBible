@@ -50,4 +50,6 @@ LIBS+=-lXmu -lXi -lGL -lXext -lX11
 ##http://www.glfw.org/download.html
 ##http://openglsuperbible.com/files/superbible7-media.zip
 
+##highlight
 ##http://renderingpipeline.com/2013/12/glsl-syntax-highlighting-for-opengl-4-4/
+##http://www.lighthouse3d.com/2013/01/notepad-glsl-4-3-syntax-highlight/
