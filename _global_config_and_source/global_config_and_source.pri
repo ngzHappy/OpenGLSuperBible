@@ -38,8 +38,12 @@ linux:{
 LIBS+=-lXmu -lXi -lGL -lXext -lX11
 }
 
+##codelf
+##http://unbug.github.io/codelf/
 
+##glm
 ##https://github.com/g-truc/glm
+
 ##reference:
 ##https://github.com/openglsuperbible/sb7code
 ##http://www.openglsuperbible.com
