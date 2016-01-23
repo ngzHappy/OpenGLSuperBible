@@ -32,8 +32,9 @@ int main(int argc, char *argv[]){
         QDir::setSearchPaths("images",addSearchPath(search_path_base,"images"));
         QDir::setSearchPaths("glsl",addSearchPath(search_path_base,"glsl"));
     }
-    
+
     MainWindow window;
+    window.resize(512,512);
     window.show();
 
     return app.exec();

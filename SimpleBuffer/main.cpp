@@ -34,6 +34,7 @@ int main(int argc, char *argv[]){
     }
 
     MainWindow window;
+    window.resize(512,512);
     window.show();
 
     return app.exec();

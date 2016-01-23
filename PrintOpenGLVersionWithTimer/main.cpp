@@ -38,6 +38,7 @@ int main(int argc, char *argv[]){
         <<"opengl version:"
         <<window.format().majorVersion()
         <<window.format().minorVersion();
+    window.resize(512,512);
     window.show();
 
     return app.exec();
