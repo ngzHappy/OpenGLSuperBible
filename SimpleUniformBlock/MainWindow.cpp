@@ -136,7 +136,7 @@ void MainWindow::paintGL() {
         glEnable(GL_DEPTH_TEST);
         glUseProgram(thisData->program);
         glBindVertexArray(thisData->vao);
-        glNamedBufferSubData(thisData->uniform_block,0,sizeof(thisData->uniforms.mvp),&thisData->uniforms);
+        glNamedBufferSubData(thisData->uniform_block,0,sizeof(thisData->uniforms),&thisData->uniforms);
         glBindBufferBase(GL_UNIFORM_BUFFER,0,thisData->uniform_block);
         glDrawElements(GL_TRIANGLES,thisData->elements_size,GL_UNSIGNED_INT,nullptr);
         glDisable(GL_DEPTH_TEST);

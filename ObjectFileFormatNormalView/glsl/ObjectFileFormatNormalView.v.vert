@@ -7,9 +7,15 @@ in layout(location=0) vec4 inPosition;
 in layout(location=1) vec4 inNormal;
 out VS_OUT{ vec4 color; } outStruct ;
 
+vec4 normal2color(vec4 color_i_){
+	float length_ = length( color_i_.xyz );
+	if(length_==0){return vec4(0,0,0,1);}
+	return abs( vec4((color_i_/length_).xyz,1) );
+}
+
 void main(){
     gl_Position =  mvp * inPosition ;
-        outStruct.color = abs( normal_mvp * inNormal );
+    outStruct.color = normal2color( normal_mvp * inNormal )  ;
 }
 
 /*
