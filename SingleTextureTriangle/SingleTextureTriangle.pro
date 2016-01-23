@@ -24,7 +24,7 @@ DISTFILES += $$PWD/glsl/readme.txt
 DISTFILES += $$PWD/glsl/SingleTextureTriangle.v.vert
 DISTFILES += $$PWD/glsl/SingleTextureTriangle.f.frag
 DISTFILES += $$PWD/images/readme.txt
-
+DISTFILES += $$PWD/images/simpletest.jpg
 
 
 
