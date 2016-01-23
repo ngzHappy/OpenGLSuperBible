@@ -22,4 +22,7 @@ SUBDIRS += SimpleVertexArrayObject_1
 SUBDIRS += ObjectFileFormatView
 SUBDIRS += ObjectFileFormatNormalView
 SUBDIRS += SimpleDrawElements
+SUBDIRS += SimpleUniformBlock
+
+
 

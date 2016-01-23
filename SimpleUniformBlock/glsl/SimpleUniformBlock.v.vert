@@ -1,15 +1,21 @@
 ﻿#version 450
 
-layout(location=1) uniform mat4 mvp ;
-layout(location=2) uniform mat4 normal_mvp ;
+uniform layout(std140,binding = 0) UniformBlock{
+    mat4 mvp ;
+    mat4 normal_mvp ;
+} uniforms__ ;
+
+mat4 getMVP(){ return uniforms__.mvp; }
+mat4 getNormalMVP(){ return uniforms__.normal_mvp; }
 
 in layout(location=0) vec4 inPosition;
 in layout(location=1) vec4 inNormal;
+
 out VS_OUT{ vec4 color; } outStruct ;
 
 void main(){
-    gl_Position =  mvp * inPosition ;
-        outStruct.color = abs( normal_mvp * inNormal );
+    gl_Position =  getMVP() * inPosition ;
+    outStruct.color = abs( getNormalMVP() * inNormal );
 }
 
 /*
