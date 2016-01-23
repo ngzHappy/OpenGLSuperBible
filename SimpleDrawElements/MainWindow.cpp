@@ -13,22 +13,30 @@ public:
     __ThisData(){
         glCreateVertexArrays(1,&vao);
         program = createProgram({
-            {GL_VERTEX_SHADER,readGLSLFile("glsl:SingleTriangle.v.vert") },
-            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SingleTriangle.f.frag")}
+            {GL_VERTEX_SHADER,readGLSLFile("glsl:SimpleDrawElements.v.vert") },
+            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SimpleDrawElements.f.frag")}
         });
         glCreateBuffers(1,&vao_buffer);
         glCreateBuffers(1,&vao_index);
 
-        constexpr const static GLuint alignas(GLuint) index_[]{0,1,2};
-        constexpr const static GLfloat alignas(GLfloat) data_[]{
+        alignas(GLuint) constexpr const static GLuint index_[]{0,1,2};
+        alignas(GLfloat) constexpr const static GLfloat data_[]{
             -0.5f,-0.5f,0,1,
              0.5f,-0.5f,0,1,
                 0, 0.5f,0,1
         };
 
+        glNamedBufferData(vao_buffer,sizeof(data_),data_,GL_STATIC_DRAW);
+        glNamedBufferData(vao_index,sizeof(index_),index_,GL_STATIC_DRAW);
 
-
+        glEnableVertexArrayAttrib(vao,0);
+        glVertexArrayVertexBuffer(vao,0,vao_buffer,0,sizeof(GLfloat[4]));
+        glVertexArrayAttribFormat(vao,0,4,GL_FLOAT,false,0);
+        glVertexArrayAttribBinding(vao,0,0);
+            
+        glVertexArrayElementBuffer(vao,vao_index);
     }
+
     ~__ThisData(){
         glDeleteProgram(program);
         glDeleteVertexArrays(1,&vao);
@@ -51,7 +59,7 @@ void MainWindow::paintGL() {
     glClearColor(0.1f,0.6f,0.3f,1);
     glClear(GL_COLOR_BUFFER_BIT);
     glBindVertexArray(thisData->vao);
-    glDrawArrays(GL_TRIANGLES,0,3);
+    glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,nullptr);
 }
 
 void MainWindow::initializeGL() {
