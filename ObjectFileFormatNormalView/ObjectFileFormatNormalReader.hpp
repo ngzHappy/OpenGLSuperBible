@@ -21,9 +21,12 @@ public:
         GLfloat y;
         GLfloat z;
         template<typename _0t,typename _1t,typename _2t>
-        Vector3D(_0t&&v0,_1t&&v1,_2t&&v2):x(v0),y(v1),z(v2) {}
+        Vector3D(_0t&&v0,_1t&&v1,_2t&&v2):
+            x(static_cast<GLfloat>(v0)),
+            y(static_cast<GLfloat>(v1)),
+            z(static_cast<GLfloat>(v2)) {}
         template<typename _0t >
-        Vector3D(_0t&&v0 ):x(v0[0]),y(v0[1]),z(v0[2]) {}
+        Vector3D(_0t&&v0 ):Vector3D(v0[0],v0[1],v0[2]) {}
     };
 
     struct alignas(GLuint) Face{
@@ -33,7 +36,7 @@ public:
         template<typename _0t,typename _1t,typename _2t>
         Face(_0t&&v0,_1t&&v1,_2t&&v2):p0(v0),p1(v1),p2(v2) {}
         template<typename _0t >
-        Face(_0t&&v0 ):p0(v0[0]),p1(v0[1]),p2(v0[2]) {}
+        Face(_0t&&v0 ):Face(v0[0],v0[1],v0[2]) {}
     };
 
     struct alignas(GLfloat) PointNormal{
