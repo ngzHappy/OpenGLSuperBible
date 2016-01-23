@@ -1,9 +1,12 @@
 ﻿#version 450
 
 out vec4 color ;
+in VS_OUT{ 
+	vec2 uv; 
+}  inStruct ;
 
 void main(){
-    color = vec4( 0.6,0.1,0.1,1);
+    color = vec4(inStruct.uv,0.5,1)  ;
 }
 
 /*

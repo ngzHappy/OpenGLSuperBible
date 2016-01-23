@@ -1,11 +1,30 @@
 ﻿#version 450
 
+uniform layout(std140,binding = 0) UniformBlock{
+    mat4 mvp ;
+    mat4 normal_mvp ;
+} uniforms__ ;
+
+mat4 getMVP(){ return uniforms__.mvp; }
+mat4 getNormalMVP(){ return uniforms__.normal_mvp; }
+
+in layout(location=0) vec4 inPosition;
+in layout(location=1) vec4 inNormal;
+in layout(location=2) vec2 inUV;
+
+out VS_OUT{
+	vec2 uv; 
+} outStruct ;
+
+vec4 normal2color(vec4 color_i_){
+	float length_ = length( color_i_.xyz );
+	if(length_==0){return vec4(0,0,0,1);}
+	return abs( vec4((color_i_/length_).xyz,1) );
+}
+
 void main(){
-    switch(gl_VertexID){
-        case 0:gl_Position = vec4(-0.5,-0.5,0,1);break;
-        case 1:gl_Position = vec4( 0.5,-0.5,0,1);break;
-        case 2:gl_Position = vec4( 0,   0.5,0,1);break;
-    }
+    gl_Position =  getMVP() * inPosition ;
+	outStruct.uv = inUV;
 }
 
 /*

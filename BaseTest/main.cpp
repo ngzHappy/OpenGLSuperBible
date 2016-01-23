@@ -6,6 +6,7 @@
 #include <QTextCodec>
 #include <QFile>
 #include <QTextStream>
+#include <QFileInfo>
 #include "MainWindow.hpp"
 
 namespace {
@@ -34,6 +35,13 @@ int main(int argc, char *argv[]){
         const QStringList search_path_base{ app.applicationDirPath(),QFile::decodeName(THIS_PROJECT_PWD) };
         QDir::setSearchPaths("images",addSearchPath(search_path_base,"images"));
         QDir::setSearchPaths("glsl",addSearchPath(search_path_base,"glsl"));
+    }
+
+    {
+        QFileInfo info("glsl:readme.txt");
+        qDebug().noquote()<<info.absoluteFilePath();
+        qDebug().noquote()<<info.completeBaseName().toLower();
+        qDebug()<<info.exists();
     }
 
     {

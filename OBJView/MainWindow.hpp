@@ -11,11 +11,14 @@ class MainWindow : public QGLWidget
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void setObjectFileFormat( const QString & );
 protected:
     void paintGL() override;
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void timerEvent(QTimerEvent *) override;
+    void keyPressEvent(QKeyEvent * e)override;
 };
 
 #endif // MAINWINDOW_HPP

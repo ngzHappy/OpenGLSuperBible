@@ -56,6 +56,7 @@ extern QString readGLSLFile( const QString & fileName  ){
         QTextStream stream(&file);
         return stream.readAll() ;
     }
+    qDebug().noquote()<<"open file error!"<<fileName;
     return QString();
 }
 
