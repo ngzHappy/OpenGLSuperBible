@@ -59,12 +59,12 @@ ObjectFileFormatNormalReader::read( const QString & fileName ){
                     bool xMax_set=false;bool xMin_set=false;
                     bool zMax_set=false;bool zMin_set=false;
                     bool yMax_set=false;bool yMin_set=false;
-                    
+
                     std::size_t current_point_=0;
                     while ((stream.atEnd()==false)&&(current_point_<points_size_)) {
-                        stream>>x; 
-                        stream>>y; 
-                        stream>>z; 
+                        stream>>x;
+                        stream>>y;
+                        stream>>z;
                         if (stream.status()==QTextStream::ReadCorruptData) {
                             return nullptr;
                         }
@@ -141,7 +141,7 @@ ObjectFileFormatNormalReader::read( const QString & fileName ){
     return __make__normal__( std::move(ans) );
 }
 
-std::shared_ptr<ObjectFileNormalFormat> 
+std::shared_ptr<ObjectFileNormalFormat>
 ObjectFileFormatNormalReader::__make__normal__(
     std::shared_ptr<ObjectFileNormalFormat> && data
     ) {
@@ -154,16 +154,17 @@ ObjectFileFormatNormalReader::__make__normal__(
     {/*make face normals*/
         const auto & face_=data->faces;
         const auto & point_=data->points;
-        auto get_point_=[point_](auto index_)->const glm::vec3 & {
+        auto get_point_=[point_](auto index_)->const glm::vec3 {
             static_assert( sizeof(glm::vec3)==sizeof(v3d_type) ,"core error!");
-            return reinterpret_cast<const glm::vec3 &>( point_[index_].point );
+            const auto & point__ =  point_[index_].point ;
+            return glm::vec3( point__.x , point__.y ,point__.z);
         };
         for (const auto & f:face_) {
             const auto & p0=get_point_(f.p0);
             const auto & p1=get_point_(f.p1);
             const auto & p2=get_point_(f.p2);
-            const auto f_normal_ = glm::outerProduct((p1-p0),(p2-p0));
-            face_normal_.push_back( reinterpret_cast<const v3d_type &>(f_normal_) );
+            const glm::vec3 f_normal_ = glm::cross((p1-p0),(p2-p0));
+            face_normal_.push_back( f_normal_ );
         }
     }
 
@@ -186,19 +187,20 @@ ObjectFileFormatNormalReader::__make__normal__(
         for (auto & p_:point_2_face_index_) {
             std::vector< glm::vec3 > normals_;
             for ( const auto & i:p_ ) {
-                normals_.push_back( reinterpret_cast<const glm::vec3 &>( face_normal_[i] ) );
+                const auto & tmp_ = face_normal_[i];
+                normals_.emplace_back( tmp_.x,tmp_.y,tmp_.z );
             }
             p_.clear();
-            const auto normal_0_ = std::accumulate(normals_.begin(),normals_.end(),glm::vec3(0,0,0));
+            auto normal_0_ = std::accumulate(normals_.begin(),normals_.end(),glm::vec3(0,0,0));
             const auto length_ = glm::length( normal_0_ );
             if (length_==0) {
                 point_[point_index_].normal={0,0,0};
             }
             else {
-                point_[point_index_].normal= 
-                    reinterpret_cast<const v3d_type &>( normal_0_/length_ );
+                normal_0_/=length_;
+                point_[point_index_].normal=normal_0_ ;
             }
-            
+
             ++point_index_;
         }
     }
