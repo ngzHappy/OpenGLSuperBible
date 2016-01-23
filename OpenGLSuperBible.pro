@@ -24,5 +24,5 @@ SUBDIRS += ObjectFileFormatNormalView
 SUBDIRS += SimpleDrawElements
 SUBDIRS += SimpleUniformBlock
 SUBDIRS += SingleTextureTriangle
-
+SUBDIRS += OBJView
 
