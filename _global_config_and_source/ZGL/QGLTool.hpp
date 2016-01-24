@@ -15,7 +15,7 @@
 #define NOCOPY_GLTOOL( _CLASSNAME__ ) _CLASSNAME__(const _CLASSNAME__ &)=delete; \
     _CLASSNAME__(_CLASSNAME__ &&) = delete; \
     _CLASSNAME__&operator=(_CLASSNAME__ &&) = delete; \
-    _CLASSNAME__&operator=(const _CLASSNAME__ &) = delete;/*delete all copy && create */
+    _CLASSNAME__&operator=(const _CLASSNAME__ &) = delete/*delete all copy && create */
 #endif
 
 class QGLWidget;

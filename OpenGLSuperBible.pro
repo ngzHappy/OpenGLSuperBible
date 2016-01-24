@@ -26,5 +26,9 @@ SUBDIRS += SimpleUniformBlock
 SUBDIRS += SingleTextureTriangle
 SUBDIRS += OBJView
 SUBDIRS += SimpleDepthTest
+SUBDIRS += SimpleBlendTest
+SUBDIRS += SimpleFramebuffer
+
+
 
 
