@@ -28,7 +28,7 @@ SUBDIRS += OBJView
 SUBDIRS += SimpleDepthTest
 SUBDIRS += SimpleBlendTest
 SUBDIRS += SimpleFramebuffer
-
+SUBDIRS += SimpleFramebufferDepth
 
 
 
