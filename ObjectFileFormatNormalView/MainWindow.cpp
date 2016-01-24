@@ -23,6 +23,13 @@ public:
     GLuint elements_size=0;
     glm::mat4 mvp;
     glm::mat4 normal_mvp;
+
+    void updateNormalMVP() {
+        glm::dmat3 _nmvp( mvp[0].xyz(),mvp[1].xyz(),mvp[2].xyz() );
+        _nmvp=glm::transpose( glm::inverse(_nmvp) );
+        normal_mvp= glm::mat4( _nmvp ) ;
+    }
+
     __ThisData() {
         glCreateVertexArrays(1,&vao);
         program=createProgram({
@@ -100,7 +107,7 @@ void MainWindow::setObjectFileFormat(const QString & fileName) {
             );
 
         thisData->mvp= scale_ * translate_ ;
-        thisData->normal_mvp= glm::inverse( glm::transpose( scale_ ) ) ;
+        thisData->normal_mvp= glm::transpose( glm::inverse( scale_ ) )  ;
 
         /*redraw*/
         updateGL();
@@ -124,6 +131,7 @@ void MainWindow::paintGL() {
     glClearDepth(1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     if (thisData->elements_size) {
+        //thisData->updateNormalMVP();
         glEnable(GL_DEPTH_TEST);
         glUseProgram(thisData->program);
         glBindVertexArray(thisData->vao);

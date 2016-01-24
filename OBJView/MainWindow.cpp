@@ -15,6 +15,18 @@
 
 class MainWindow::__ThisData {
 public:
+    struct {
+        glm::mat4 mvp;
+        glm::mat4 normal_mvp;
+    }uniforms;
+    void updateNormalMVP() {
+        auto & normal_mvp=uniforms.normal_mvp;
+        auto & mvp=uniforms.mvp;
+        glm::dmat3 _nmvp( mvp[0].xyz(),mvp[1].xyz(),mvp[2].xyz() );
+        _nmvp=glm::transpose( glm::inverse(_nmvp) );
+        normal_mvp= glm::mat4( _nmvp ) ;
+    }
+
     unsigned int timerStamp=0;
     GLuint program=0;
     GLuint vao=0;
@@ -22,12 +34,12 @@ public:
     GLuint vao_buffer=0;
     GLuint elements_size=0;
     GLuint uniform_block=0;
-    struct {
-        glm::mat4 mvp;
-        glm::mat4 normal_mvp;
-    }uniforms;
-
-    glm::mat4 & mvp() { return uniforms.mvp ; }
+   
+    void setMVP(const glm::mat4 & v) { 
+        uniforms.mvp=v; 
+        updateNormalMVP();
+    }
+    const glm::mat4 & getMVP()const { return uniforms.mvp ; }
 
     __ThisData() {
         glCreateVertexArrays(1,&vao);
@@ -114,9 +126,8 @@ void MainWindow::setObjectFileFormat(const QString & fileName) {
             -(off_->zMax+off_->zMin)/2)
             );
 
-        thisData->uniforms.mvp= scale_ * translate_ ;
-        thisData->uniforms.normal_mvp= glm::inverse( glm::transpose( scale_ ) ) ;
-
+        thisData->setMVP( scale_ * translate_ );
+       
         /*redraw*/
         updateGL();
     }
@@ -170,27 +181,27 @@ void MainWindow::keyPressEvent(QKeyEvent * e) {
         } break;
         case Qt::Key_Left: {
             const static auto rotate_=glm::rotate(glm::mat4(),rotate_step,left_right_axis);
-            thisData->mvp()=rotate_*thisData->mvp(); updateGL();
+            thisData->setMVP( rotate_*thisData->getMVP() ); updateGL();
         } break;
         case Qt::Key_Right: {
             const static auto rotate_=glm::rotate(glm::mat4(),-rotate_step,left_right_axis);
-            thisData->mvp()=rotate_*thisData->mvp(); updateGL();
+            thisData->setMVP( rotate_*thisData->getMVP() ); updateGL();
         }break;
         case Qt::Key_Up: {
             const static auto rotate_=glm::rotate(glm::mat4(),rotate_step,up_down_axis);
-            thisData->mvp()=rotate_*thisData->mvp(); updateGL();
+            thisData->setMVP( rotate_*thisData->getMVP() ); updateGL();
         }break;
         case Qt::Key_Down: {
             const static auto rotate_=glm::rotate(glm::mat4(),-rotate_step,up_down_axis);
-            thisData->mvp()=rotate_*thisData->mvp(); updateGL();
+            thisData->setMVP( rotate_*thisData->getMVP() ); updateGL();
         }break;
         case Qt::Key_PageDown: {
             const static auto rotate_=glm::rotate(glm::mat4(),rotate_step,page_up_down_axis);
-            thisData->mvp()=rotate_*thisData->mvp(); updateGL();
+            thisData->setMVP( rotate_*thisData->getMVP() ); updateGL();
         }break;
         case Qt::Key_PageUp: {
             const static auto rotate_=glm::rotate(glm::mat4(),-rotate_step,page_up_down_axis);
-            thisData->mvp()=rotate_*thisData->mvp(); updateGL();
+            thisData->setMVP( rotate_*thisData->getMVP() ); updateGL();
         }break;
         default:break;
     }
