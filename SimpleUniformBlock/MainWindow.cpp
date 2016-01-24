@@ -121,7 +121,7 @@ void MainWindow::setObjectFileFormat(const QString & fileName) {
             );
 
         thisData->uniforms.mvp= scale_ * translate_ ;
-        thisData->uniforms.normal_mvp= glm::inverse( glm::transpose( scale_ ) ) ;
+        thisData->uniforms.normal_mvp= glm::transpose( glm::inverse( scale_ ) ) ;
 
         /*redraw*/
         updateGL();

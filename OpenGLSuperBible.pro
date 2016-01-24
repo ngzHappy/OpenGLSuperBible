@@ -25,4 +25,6 @@ SUBDIRS += SimpleDrawElements
 SUBDIRS += SimpleUniformBlock
 SUBDIRS += SingleTextureTriangle
 SUBDIRS += OBJView
+SUBDIRS += SimpleDepthTest
+
 

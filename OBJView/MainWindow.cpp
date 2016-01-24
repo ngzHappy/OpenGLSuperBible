@@ -126,8 +126,9 @@ void MainWindow::setObjectFileFormat(const QString & fileName) {
             -(off_->zMax+off_->zMin)/2)
             );
 
+        thisData->uniforms.normal_mvp=glm::mat4();
         thisData->setMVP( scale_ * translate_ );
-       
+        
         /*redraw*/
         updateGL();
     }
