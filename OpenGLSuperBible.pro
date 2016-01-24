@@ -29,6 +29,6 @@ SUBDIRS += SimpleDepthTest
 SUBDIRS += SimpleBlendTest
 SUBDIRS += SimpleFramebuffer
 SUBDIRS += SimpleFramebufferDepth
-
+SUBDIRS += SimpleFramebufferBlend
 
 
