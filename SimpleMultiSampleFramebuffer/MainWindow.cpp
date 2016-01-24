@@ -4,6 +4,86 @@
 #include <cassert>
 #include <QTimer>
  
+class SimpleFrameBuffer {
+    NOCOPY_GLTOOL(SimpleFrameBuffer);
+    bool isOK=false;
+    GLuint fbo_=0;
+    int width_=0;
+    int height_=0;
+    GLuint color0_texture_=0;
+    GLuint color1_texture_=0;
+    GLuint depth_texture_=0;
+    void __init_frame_buffer()try {
+
+        isOK=true;
+        if (width_<=0) { throw QString("width is null"); }
+        if (height_<=0) {throw QString("height is null");}
+
+        glCreateFramebuffers(1,&fbo_);
+
+        glCreateTextures(GL_TEXTURE_2D,1,&depth_texture_);
+        glCreateTextures(GL_TEXTURE_2D,1,&color1_texture_);
+        glCreateTextures(GL_TEXTURE_2D,1,&color0_texture_);
+
+        glTextureStorage2D(depth_texture_,1,GL_DEPTH_COMPONENT32,width_,height_);
+        glTextureStorage2D(color1_texture_,1,GL_RGB16F,width_,height_);
+        glTextureStorage2D(color0_texture_,1,GL_RGB16F,width_,height_);
+
+        glNamedFramebufferTexture(fbo_,GL_DEPTH_ATTACHMENT,depth_texture_,0);
+        glNamedFramebufferTexture(fbo_,GL_COLOR_ATTACHMENT0,color0_texture_, 0 );
+        glNamedFramebufferTexture(fbo_,GL_COLOR_ATTACHMENT1,color1_texture_, 0 );
+
+#if defined(_DEBUG)
+        /*check*/
+        GLenum fboStatus = glCheckNamedFramebufferStatus(
+            fbo_,GL_DRAW_FRAMEBUFFER);
+        if (fboStatus!=GL_FRAMEBUFFER_COMPLETE){
+            isOK=false;
+            switch ( fboStatus )
+            {
+                case GL_FRAMEBUFFER_UNDEFINED: qDebug() << "GL_FRAMEBUFFER_UNDEFINED"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:qDebug() << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:qDebug() << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:qDebug() << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:qDebug() << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; break;
+                case GL_FRAMEBUFFER_UNSUPPORTED:qDebug() << "GL_FRAMEBUFFER_UNSUPPORTED"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:qDebug() << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:qDebug() << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS"; break;
+                default:
+                    break;
+            }
+            return ;
+        }
+
+#endif
+
+    }/*__init_frame_buffer*/
+    catch (const QString & error) {
+        isOK=false;
+        qDebug().noquote()<<error;
+    }
+public:
+    SimpleFrameBuffer(int w_,int h_):
+        width_(w_),height_(h_) {
+        __init_frame_buffer();
+    }
+    ~SimpleFrameBuffer() {
+        glDeleteFramebuffers(1,&fbo_);
+        glDeleteTextures(1,&color0_texture_);
+        glDeleteTextures(1,&color1_texture_);
+        glDeleteTextures(1,&depth_texture_);
+    }
+
+    int getWidth() const { return width_; }
+    int getHeight()const { return height_; }
+    GLuint getFBO() const { return fbo_; }
+    bool isValid() const { return isOK&&(fbo_); }
+    void drawBuffer() const{
+        constexpr const static GLenum draws_[]{GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1};
+        glNamedFramebufferDrawBuffers(fbo_,2,draws_);
+    }
+};
+
 class SimpleMultiFrameBuffer {
     NOCOPY_GLTOOL(SimpleMultiFrameBuffer);
     bool isOK=false;
@@ -82,6 +162,38 @@ public:
         constexpr const static GLenum draws_[]{GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1};
         glNamedFramebufferDrawBuffers(fbo_,2,draws_);
     }
+    std::shared_ptr<SimpleFrameBuffer> downSample()const {
+        auto down_fbo = std::make_shared<SimpleFrameBuffer>(width_,height_);
+        if (down_fbo) {
+            
+            glNamedFramebufferReadBuffer(fbo_,GL_COLOR_ATTACHMENT0);
+            glNamedFramebufferDrawBuffer(down_fbo->getFBO(),GL_COLOR_ATTACHMENT0);
+            glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
+                0,0,width_,height_,
+                0,0,width_,height_,
+                GL_COLOR_BUFFER_BIT,
+                GL_LINEAR
+                );
+
+            glNamedFramebufferReadBuffer(fbo_,GL_COLOR_ATTACHMENT1);
+            glNamedFramebufferDrawBuffer(down_fbo->getFBO(),GL_COLOR_ATTACHMENT1);
+            glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
+                0,0,width_,height_,
+                0,0,width_,height_,
+                GL_COLOR_BUFFER_BIT,
+                GL_LINEAR
+                );
+
+            glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
+                0,0,width_,height_,
+                0,0,width_,height_,
+                GL_DEPTH_BUFFER_BIT,
+                GL_NEAREST
+                );
+
+        }
+        return std::move(down_fbo);
+    }
 };
 
 class MainWindow::__ThisData {
@@ -114,57 +226,12 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow(){
     delete thisData;
 }
-
-class MultiSampleDraw {
-    struct Point4D {GLfloat x,y,z,w;};
-    struct {
-        Point4D source_[4];
-        Point4D target_[4];
-    }data_;
-    static const char * getVS() {
-        return u8R"___(
-#version 450
-
-uniform layout(std140,binding=0) UniformBlock_{
-mat4 source_;
-mat4 target_;
-}ublock;
-
-out vec4 position_;
-out vec2 uv_;
-
-void main(){
-
-}
-
-)___";
-    }
-    static const char * getFS() {
-        return u8R"___(
-#version 450
-
-in vec4 position_;
-in vec2 uv_;
-
-)___";
-    }
-public:
-    /*
-    you must bind draw frame buffer first
-    */
-    static void draw( GLuint namedMultiSampleTexture ,
-        GLfloat sx0,GLfloat sy0,GLfloat sx1,GLfloat sy1,
-        GLfloat tx0,GLfloat ty0,GLfloat tx1,GLfloat ty1
-        ) {
-        
-    }
-};
-
+ 
 void MainWindow::paintGL() {
     glEnable(GL_MULTISAMPLE);
     /*defined the function to copy */
-    auto copy_function=[this](auto * fbo) {
-         
+    auto copy_function=[this](auto * fbo_) {
+        auto fbo=fbo_->downSample();
         glBindFramebuffer(GL_FRAMEBUFFER,0);
         glClearColor(0.1f,0.6f,0.3f,1);
         glClearDepth(1);
