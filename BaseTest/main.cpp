@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
     {
         QFile file("images:readme.txt");
         file.open(QIODevice::ReadOnly);
-        qDebug().noquote()<<file.readAll();
+        qDebug().noquote()<<"images:readme.txt:"<<file.readAll();
     }
 
     {
