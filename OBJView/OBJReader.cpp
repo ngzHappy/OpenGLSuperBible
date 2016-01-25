@@ -19,12 +19,12 @@ OBJReader::read(const QString & fileName) {
     {/*read data*/
         QString dirPath;
         std::string fileName_;
-        const static std::regex r_space(u8R"___(\s*)___");
+        const static std::regex r_space  (u8R"___(\s*)___");
         const static std::regex r_comment(u8R"___(\s*#[\s\S]*)___");
-        const static std::regex r_vt(u8R"___(\s*vt[\s\S]*)___");
-        const static std::regex r_vn(u8R"___(\s*vn[\s\S]*)___");
-        const static std::regex r_v(u8R"___(\s*v[\s\S]*)___");
-        const static std::regex r_f(u8R"___(\s*f[\s\S]*)___");
+        const static std::regex r_vt     (u8R"___(\s*vt[\s\S]*)___");
+        const static std::regex r_vn     (u8R"___(\s*vn[\s\S]*)___");
+        const static std::regex r_v      (u8R"___(\s*v\s[\s\S]*)___");
+        const static std::regex r_f      (u8R"___(\s*f\s[\s\S]*)___");
         const static std::regex r_face_data(u8R"___(\s*([^/]*)/([^/]*)/([^\s]*)\s*([^/]*)/([^/]*)/([^\s]*)\s*([^/]*)/([^/]*)/([^\s]*)\s*)___");
 
         {
