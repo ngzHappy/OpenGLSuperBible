@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 
 namespace {
 class InitRand {
@@ -94,11 +95,18 @@ GLuint createProgram( const std::initializer_list<GLSLFile> & glslFiles )try{
     }
 
     {/*build shader source*/
-        for (const auto &shader:shaders) {glCompileShader(shader.value);}
-    }
-
-    {/*check build state*/
-
+        GLint log_length=!GL_TRUE;
+        for (const auto &shader:shaders) {
+            glCompileShader(shader.value);
+            glGetShaderiv(shader.value,GL_COMPILE_STATUS,&log_length);
+            if (log_length!=GL_TRUE) {
+                glGetShaderiv(shader.value,GL_INFO_LOG_LENGTH,&log_length);
+                std::string log_(log_length+8,0);
+                glGetShaderInfoLog(shader.value,log_length,nullptr,&log_[0]);
+                qDebug().noquote()<<log_.c_str();
+                throw log_;
+            }
+        }
     }
 
     class Program {
@@ -120,6 +128,19 @@ GLuint createProgram( const std::initializer_list<GLSLFile> & glslFiles )try{
 
     /*link program*/
     glLinkProgram(program.value);
+
+    {/*check link state*/
+        GLint log_len=!GL_TRUE;
+        glGetProgramiv(program.value,GL_LINK_STATUS,&log_len);
+        if (log_len!=GL_TRUE) {
+            std::string log_;
+            glGetProgramiv(program.value,GL_INFO_LOG_LENGTH,&log_len);
+            log_.resize(log_len+8,0);
+            glGetProgramInfoLog(program.value,log_len,nullptr,&log_[0]);
+            qDebug().noquote()<<log_.c_str();
+            throw log_;
+        }
+    }
 
     {
         const auto ans=program.value;
