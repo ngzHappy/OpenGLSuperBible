@@ -91,15 +91,24 @@ public:
         return images_;
     }
 
+    struct AInstanceData{
+        float rotate=0;
+        float dx=0;
+        float dy=0;
+        float unuse=1;
+    };
+
+    AInstanceData instanceData[IMAGES_SIZE];
 
     unsigned int timerStamp=0;
     GLuint program=0;
     GLuint vao=0;
-    GLuint texture;
-
+    GLuint texture=0;
+    GLuint instance_buffer=0;
 
     __ThisData() {
         glCreateVertexArrays(1,&vao);
+        glCreateBuffers(1,&instance_buffer);
         program=createProgram({
             {GL_VERTEX_SHADER,readGLSLFile("glsl:SimpleTextureArray.v.vert") },
             {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SimpleTextureArray.f.frag")}
@@ -125,11 +134,28 @@ public:
             }
         }
 
+        glNamedBufferData(instance_buffer,sizeof(instanceData),instanceData,GL_STATIC_DRAW);
+        glEnableVertexArrayAttrib(vao,0);
+        glVertexArrayVertexBuffer(vao,0,instance_buffer,0,sizeof(AInstanceData));
+        glVertexArrayAttribFormat(vao,0,4,GL_FLOAT,false,0);
+        glVertexArrayAttribBinding(vao,0,0);
+
+        for (int i=0; i<IMAGES_SIZE;++i  ) {
+            auto u=i%8 + 1;
+            auto v=i/8 + 1;
+
+            instanceData[i].rotate = (rand()%1000)/300.0f;
+            instanceData[i].dx = u * (1.80f/8);
+            instanceData[i].dy = v * (1.80f/8);
+
+        }
+
     }
     ~__ThisData() {
         glDeleteTextures(1,&texture);
         glDeleteProgram(program);
         glDeleteVertexArrays(1,&vao);
+        glDeleteBuffers(1,&instance_buffer);
     }
 };
 
@@ -150,7 +176,9 @@ void MainWindow::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT);
     glBindVertexArray(thisData->vao);
     glBindTextureUnit(0,thisData->texture);
-    glDrawArrays( GL_TRIANGLE_STRIP ,0,4);
+    glVertexAttribDivisor( 0,1 );
+    glNamedBufferSubData(thisData->instance_buffer,0,sizeof(thisData->instanceData),thisData->instanceData );
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP,0,4,__ThisData::IMAGES_SIZE);
 }
 
 void MainWindow::initializeGL() {
