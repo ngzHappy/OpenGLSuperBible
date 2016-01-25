@@ -21,15 +21,22 @@ mat4 getMatrix( vec4 data_1 ){
     double dx = data_1.y;
     double dy = data_1.z;
 
-    double rsin_ = sin( rotate_ );
-    double rcos_ = cos( rotate_ );
+    double rsin_ = sin( rotate_/data_1.w );
+    double rcos_ = cos( rotate_/data_1.w );
 
-    return mat4(
+    mat4 rotate_matrix =  mat4(
     rcos_,-rsin_,0,0,/*column x*/
     rsin_, rcos_,0,0,/*column y*/
         0,     0,1,0,/*column z*/
-       dx,    dy,0,1 /*column t*/
+        0,     0,0,1 /*column t*/
     );
+
+    return mat4(
+     1, 0,0,0,
+     0, 1,0,0,
+     0, 0,1,0,
+    dx,dy,0,1
+    ) * rotate_matrix  ;
 
 }
 
@@ -38,9 +45,9 @@ flat out float texture_id;
 
 void main(){
 
-	vec4 vertex_this = data_matrix[ gl_VertexID ] ;
-    gl_Position = getMatrix( input_data_0 ) * vertex_this;
+    vec4 vertex_this = data_matrix[ gl_VertexID ] ;
     uv = (vertex_this.xy+1)*0.5;
+    gl_Position = getMatrix( input_data_0 ) * vertex_this;
     texture_id = gl_InstanceID;
 
 }

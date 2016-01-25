@@ -140,15 +140,21 @@ public:
         glVertexArrayAttribFormat(vao,0,4,GL_FLOAT,false,0);
         glVertexArrayAttribBinding(vao,0,0);
 
+        auto rand_0p1=[](){
+            return ((rand()&1)?-1:1) * ((rand()%1000)/10000.0f);
+        };
+
         for (int i=0; i<IMAGES_SIZE;++i  ) {
             auto u=i%8 + 1;
             auto v=i/8 + 1;
 
             instanceData[i].rotate = (rand()%1000)/300.0f;
-            instanceData[i].dx = u * (1.80f/8);
-            instanceData[i].dy = v * (1.80f/8);
-
+            instanceData[i].dx = u * (1.80f/8) - 1 + 1.5f*rand_0p1() ;
+            instanceData[i].dy = 2-(v * (6.0f/8) +rand_0p1()*2.1f) ;
+            instanceData[i].unuse = ((rand()&1)?-1:1) ;
         }
+
+        glNamedBufferSubData( instance_buffer,0,sizeof( instanceData), instanceData );
 
     }
     ~__ThisData() {
@@ -157,6 +163,31 @@ public:
         glDeleteVertexArrays(1,&vao);
         glDeleteBuffers(1,&instance_buffer);
     }
+
+    void updataData(){
+
+        auto rand_0p1=[](){
+            return ((rand()%1000)/1000.0f);
+        };
+
+        for (int i=0; i<IMAGES_SIZE;++i  ) {
+
+            instanceData[i].rotate += rand_0p1() ;
+            instanceData[i].dy += -rand_0p1()*0.21f ;
+
+            if(instanceData[i].rotate > 8){
+                instanceData[i].rotate -= 3.1415926f*2;
+            }
+
+            if( instanceData[i].dy < -2.3f ){
+                instanceData[i].dy += 6;
+            }
+
+        }
+
+        glNamedBufferSubData( instance_buffer,0,sizeof( instanceData), instanceData );
+    }
+
 };
 
 MainWindow::MainWindow(QWidget *parent)
@@ -177,7 +208,6 @@ void MainWindow::paintGL() {
     glBindVertexArray(thisData->vao);
     glBindTextureUnit(0,thisData->texture);
     glVertexAttribDivisor( 0,1 );
-    glNamedBufferSubData(thisData->instance_buffer,0,sizeof(thisData->instanceData),thisData->instanceData );
     glDrawArraysInstanced(GL_TRIANGLE_STRIP,0,4,__ThisData::IMAGES_SIZE);
 }
 
@@ -186,6 +216,7 @@ void MainWindow::initializeGL() {
         setSimpleCallbackFunction();
         const_cast<__ThisData * &>(thisData)=new __ThisData;
         assert(thisData);
+        startTimer(1000);
     }
 }
 
@@ -193,11 +224,9 @@ void MainWindow::resizeGL(int w,int h) { glViewport(0,0,w,h); }
 
 void MainWindow::timerEvent(QTimerEvent *e) {
     QGLWidget::timerEvent(e);
+    thisData->updataData();
     updateGL();
 }
-
-
-
 
 
 
