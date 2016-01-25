@@ -31,4 +31,4 @@ SUBDIRS += SimpleFramebuffer
 SUBDIRS += SimpleFramebufferDepth
 SUBDIRS += SimpleFramebufferBlend
 SUBDIRS += SimpleMultiSampleFramebuffer
-
+SUBDIRS += SimpleTextureArray
