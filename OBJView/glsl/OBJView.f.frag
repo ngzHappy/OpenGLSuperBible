@@ -5,8 +5,10 @@ in VS_OUT{
 	vec2 uv; 
 }  inStruct ;
 
+uniform layout(binding = 0) sampler2D texture_0;
+
 void main(){
-    color = vec4(inStruct.uv,0.5,1)  ;
+    color = texture( texture_0 , inStruct.uv )  ;
 }
 
 /*

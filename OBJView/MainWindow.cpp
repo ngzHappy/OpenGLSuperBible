@@ -34,6 +34,7 @@ public:
     GLuint vao_buffer=0;
     GLuint elements_size=0;
     GLuint uniform_block=0;
+    GLuint texture_=0;
    
     void setMVP(const glm::mat4 & v) { 
         uniforms.mvp=v; 
@@ -56,19 +57,34 @@ public:
         glDeleteBuffers(1,&vao_buffer);
         glDeleteVertexArrays(1,&vao);
         glDeleteBuffers(1,&uniform_block);
+        glDeleteTextures(1,&texture_);
     }
 };
 
 void MainWindow::setObjectFileFormat(const QString & fileName) {
     auto off_=OBJReader::read(fileName);
     if (off_) {
+
+        QImage texture_ = readGLSLImage(off_->dirPath+"/"+off_->textureFileName);
+        if ((texture_.width()<=0)||(texture_.height()<=0)) { 
+            qDebug()<<"can not find : "<<off_->dirPath+"/"+off_->textureFileName;
+            return;
+        }
+        
         glDeleteBuffers(1,&(thisData->vao_index));
         glDeleteBuffers(1,&(thisData->vao_buffer));
         glDeleteVertexArrays(1,&(thisData->vao));
+        glDeleteTextures(1,&(thisData->texture_));
 
         glCreateBuffers(1,&(thisData->vao_index));
         glCreateBuffers(1,&(thisData->vao_buffer));
         glCreateVertexArrays(1,&(thisData->vao));
+        glCreateTextures(GL_TEXTURE_2D, 1,&(thisData->texture_));
+
+        glTextureStorage2D(thisData->texture_,1,GL_RGBA16F,texture_.width(),texture_.height());
+        glTextureSubImage2D(thisData->texture_,0,0,0,texture_.width(),texture_.height(),
+            GL_RGBA,GL_UNSIGNED_BYTE,texture_.constBits());
+        texture_=QImage();
 
         glNamedBufferData(
             thisData->vao_buffer,
@@ -153,6 +169,7 @@ void MainWindow::paintGL() {
     if (thisData->elements_size) {
         glEnable(GL_DEPTH_TEST);
         glUseProgram(thisData->program);
+        glBindTextureUnit(0,thisData->texture_);
         glBindVertexArray(thisData->vao);
         glNamedBufferSubData(thisData->uniform_block,0,sizeof(thisData->uniforms),&thisData->uniforms);
         glBindBufferBase(GL_UNIFORM_BUFFER,0,thisData->uniform_block);

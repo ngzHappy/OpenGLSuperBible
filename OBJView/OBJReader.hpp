@@ -78,6 +78,11 @@ public:
     GLfloat xMin=0;
 
     QString dirPath;
+    /* if the file named AbcDef.xYz.obj then
+    textureFileName = abcdef.xyz
+    the textureFile should be a picture likc jpg,png,bmp ... which qt an read 
+    */
+    QString textureFileName;
 };
 
 class OBJReader{

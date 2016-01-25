@@ -24,7 +24,7 @@ vec4 normal2color(vec4 color_i_){
 
 void main(){
     gl_Position =  getMVP() * inPosition ;
-	outStruct.uv = inUV;
+	outStruct.uv = vec2( inUV.x,1-inUV.y  );
 }
 
 /*

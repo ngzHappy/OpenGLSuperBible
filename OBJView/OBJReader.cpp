@@ -17,14 +17,14 @@ OBJReader::read(const QString & fileName) {
     std::shared_ptr<OBJData> ans;
 
     {/*read data*/
-        QString dirPath;
+        QString dirPath; QString textureFileName;
         std::string fileName_;
         const static std::regex r_space  (u8R"___(\s*)___");
         const static std::regex r_comment(u8R"___(\s*#[\s\S]*)___");
-        const static std::regex r_vt     (u8R"___(\s*vt[\s\S]*)___");
-        const static std::regex r_vn     (u8R"___(\s*vn[\s\S]*)___");
-        const static std::regex r_v      (u8R"___(\s*v\s[\s\S]*)___");
-        const static std::regex r_f      (u8R"___(\s*f\s[\s\S]*)___");
+        const static std::regex r_vt     (u8R"___(\s*vt)___");
+        const static std::regex r_vn     (u8R"___(\s*vn)___");
+        const static std::regex r_v      (u8R"___(\s*v)___");
+        const static std::regex r_f      (u8R"___(\s*f)___");
         const static std::regex r_face_data(u8R"___(\s*([^/]*)/([^/]*)/([^\s]*)\s*([^/]*)/([^/]*)/([^\s]*)\s*([^/]*)/([^/]*)/([^\s]*)\s*)___");
 
         {
@@ -32,6 +32,7 @@ OBJReader::read(const QString & fileName) {
             if (info.exists()==false) { return nullptr; }
             fileName_=info.absoluteFilePath().toLocal8Bit().toStdString();
             dirPath= QDir::cleanPath( info.absoluteDir().absolutePath() );
+            textureFileName = info.completeBaseName().trimmed().toLower();
         }
 
         std::ifstream stream_(fileName_);
@@ -111,7 +112,9 @@ OBJReader::read(const QString & fileName) {
 
                 std::stringstream stream(std::move(line_));
                 stream.exceptions(std::ifstream::failbit|std::ifstream::badbit);
+#if defined(NDEBUG)
                 line_.clear();
+#endif
 
                 /*get the keyword*/
                 stream>>key_word_;
@@ -233,6 +236,7 @@ OBJReader::read(const QString & fileName) {
             }
         }
 
+        ans->textureFileName=textureFileName;
         ans->dirPath=std::move(dirPath);
     }/*~read data*/
 

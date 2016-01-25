@@ -23,6 +23,8 @@ DEFINES *= THIS_PROJECT_PWD=\\\"$$PWD\\\"
 DEFINES *= THIS_PROJECT_LOCALCODEC=\\\"$$LOCAL_LANGUAGE_\\\"
 
 DISTFILES += $$PWD/glsl/readme.txt
+DISTFILES += $$PWD/obj3d/test.obj
+DISTFILES += $$PWD/obj3d/test.png
 DISTFILES += $$PWD/glsl/OBJView.v.vert
 DISTFILES += $$PWD/glsl/OBJView.f.frag
 DISTFILES += $$PWD/images/readme.txt
