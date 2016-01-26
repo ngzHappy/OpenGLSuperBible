@@ -127,4 +127,5 @@ SimpleVertexAttribute/release/*
 SinglePoint/release/*
 SingleTextureTriangle/release/*
 SingleTriangle/release/*
-xxx.txt
+BaseMultiSampleFramebuffer/release/*
+BaseMultiSampleFramebuffer/debug/*
