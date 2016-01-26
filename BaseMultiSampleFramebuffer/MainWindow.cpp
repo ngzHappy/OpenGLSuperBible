@@ -192,7 +192,6 @@ public:
     bool isResize=false;
     GLuint vao = 0;
     GLuint vao_cube_data_buffer=0;
-    GLuint vao_cube_index_buffer=0;
     GLuint frame_program=0;/*gen a texture*/
     GLuint cube_program=0;/*draw texture to cube*/
     glm::mat4 mvp_matrix;
@@ -200,7 +199,7 @@ public:
     std::shared_ptr<SimpleMultiFrameBuffer> fbo;
 
     __ThisData(){
-        glCreateBuffers(1,&vao_cube_index_buffer);
+     
         glCreateBuffers(1,&vao_cube_data_buffer);
         glCreateVertexArrays(1,&vao);
         frame_program = createProgram({
@@ -211,22 +210,7 @@ public:
             {GL_VERTEX_SHADER,readGLSLFile("glsl:BaseMultiSampleFramebuffer.cube.vert") },
             {GL_FRAGMENT_SHADER,readGLSLFile("glsl:BaseMultiSampleFramebuffer.cube.frag")}
         });
-
-        constexpr static const GLuint vertex_indices[] =
-        {
-            0, 1, 2,
-            2, 1, 3,
-            2, 3, 4,
-            4, 3, 5,
-            4, 5, 6,
-            6, 5, 7,
-            6, 7, 0,
-            0, 7, 1,
-            6, 0, 2,
-            2, 4, 6,
-            7, 5, 3,
-            7, 3, 1
-        };
+              
 
         /* cube data */
         constexpr static const GLfloat vertex_data[] =
@@ -281,10 +265,7 @@ public:
             -0.25f, -0.25f,  0.25f,      0.0f, 0.0f,
         };
 
-        glNamedBufferData(vao_cube_index_buffer,sizeof(vertex_indices),vertex_indices,GL_STATIC_DRAW);
         glNamedBufferData(vao_cube_data_buffer,sizeof(vertex_data),vertex_data,GL_STATIC_DRAW);
-
-        glVertexArrayElementBuffer(vao,vao_cube_index_buffer);
 
         glEnableVertexArrayAttrib(vao,0);
         glVertexArrayVertexBuffer(vao,0,vao_cube_data_buffer,0,sizeof(GLfloat[5]));
@@ -300,7 +281,6 @@ public:
         mvp_matrix[2][2]=2;
     }
     ~__ThisData(){
-        glDeleteBuffers(1,&vao_cube_index_buffer);
         glDeleteBuffers(1,&vao_cube_data_buffer);
         glDeleteProgram(cube_program);
         glDeleteProgram(frame_program);
