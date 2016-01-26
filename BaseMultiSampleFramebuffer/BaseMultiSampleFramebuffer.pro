@@ -21,8 +21,10 @@ DEFINES *= THIS_PROJECT_PWD=\\\"$$PWD\\\"
 DEFINES *= THIS_PROJECT_LOCALCODEC=\\\"$$LOCAL_LANGUAGE_\\\"
 
 DISTFILES += $$PWD/glsl/readme.txt
-DISTFILES += $$PWD/glsl/BaseMultiSampleFramebuffer.v.vert
-DISTFILES += $$PWD/glsl/BaseMultiSampleFramebuffer.f.frag
+DISTFILES += $$PWD/glsl/BaseMultiSampleFramebuffer.cube.vert
+DISTFILES += $$PWD/glsl/BaseMultiSampleFramebuffer.cube.frag
+DISTFILES += $$PWD/glsl/BaseMultiSampleFramebuffer.frame.vert
+DISTFILES += $$PWD/glsl/BaseMultiSampleFramebuffer.frame.frag
 DISTFILES += $$PWD/images/readme.txt
 
 

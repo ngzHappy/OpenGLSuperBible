@@ -21,16 +21,13 @@ class SimpleFrameBuffer {
         glCreateFramebuffers(1,&fbo_);
 
         glCreateTextures(GL_TEXTURE_2D,1,&depth_texture_);
-        glCreateTextures(GL_TEXTURE_2D,1,&color1_texture_);
         glCreateTextures(GL_TEXTURE_2D,1,&color0_texture_);
 
         glTextureStorage2D(depth_texture_,1,GL_DEPTH_COMPONENT32,width_,height_);
-        glTextureStorage2D(color1_texture_,1,GL_RGB16F,width_,height_);
         glTextureStorage2D(color0_texture_,1,GL_RGB16F,width_,height_);
 
         glNamedFramebufferTexture(fbo_,GL_DEPTH_ATTACHMENT,depth_texture_,0);
         glNamedFramebufferTexture(fbo_,GL_COLOR_ATTACHMENT0,color0_texture_, 0 );
-        glNamedFramebufferTexture(fbo_,GL_COLOR_ATTACHMENT1,color1_texture_, 0 );
 
 #if defined(_DEBUG)
         /*check*/
@@ -69,7 +66,6 @@ public:
     ~SimpleFrameBuffer() {
         glDeleteFramebuffers(1,&fbo_);
         glDeleteTextures(1,&color0_texture_);
-        glDeleteTextures(1,&color1_texture_);
         glDeleteTextures(1,&depth_texture_);
     }
 
@@ -90,7 +86,6 @@ class SimpleMultiFrameBuffer {
     int width_=0;
     int height_=0;
     GLuint color0_texture_=0;
-    GLuint color1_texture_=0;
     GLuint depth_texture_=0;
     void __init_frame_buffer()try {
 
@@ -101,16 +96,13 @@ class SimpleMultiFrameBuffer {
         glCreateFramebuffers(1,&fbo_);
 
         glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE,1,&depth_texture_);
-        glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE,1,&color1_texture_);
         glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE,1,&color0_texture_);
 
         glTextureStorage2DMultisample(depth_texture_,8,GL_DEPTH_COMPONENT32,width_,height_,false);
-        glTextureStorage2DMultisample(color1_texture_,8,GL_RGB16F,width_,height_,false);
         glTextureStorage2DMultisample(color0_texture_,8,GL_RGB16F,width_,height_,false);
 
         glNamedFramebufferTexture(fbo_,GL_DEPTH_ATTACHMENT,depth_texture_,0);
         glNamedFramebufferTexture(fbo_,GL_COLOR_ATTACHMENT0,color0_texture_, 0 );
-        glNamedFramebufferTexture(fbo_,GL_COLOR_ATTACHMENT1,color1_texture_, 0 );
 
 #if defined(_DEBUG)
         /*check*/
@@ -149,7 +141,6 @@ public:
     ~SimpleMultiFrameBuffer() {
         glDeleteFramebuffers(1,&fbo_);
         glDeleteTextures(1,&color0_texture_);
-        glDeleteTextures(1,&color1_texture_);
         glDeleteTextures(1,&depth_texture_);
     }
 
@@ -158,8 +149,8 @@ public:
     GLuint getFBO() const { return fbo_; }
     bool isValid() const { return isOK&&(fbo_); }
     void drawBuffer() const{
-        constexpr const static GLenum draws_[]{GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1};
-        glNamedFramebufferDrawBuffers(fbo_,2,draws_);
+        constexpr const static GLenum draws_[]{GL_COLOR_ATTACHMENT0};
+        glNamedFramebufferDrawBuffers(fbo_,1,draws_);
     }
     std::shared_ptr<SimpleFrameBuffer> downSample()const {
         auto down_fbo = std::make_shared<SimpleFrameBuffer>(width_,height_);
@@ -174,15 +165,8 @@ public:
                 GL_LINEAR
                 );
 
-            glNamedFramebufferReadBuffer(fbo_,GL_COLOR_ATTACHMENT1);
-            glNamedFramebufferDrawBuffer(down_fbo->getFBO(),GL_COLOR_ATTACHMENT1);
-            glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
-                0,0,width_,height_,
-                0,0,width_,height_,
-                GL_COLOR_BUFFER_BIT,
-                GL_LINEAR
-                );
-
+            glNamedFramebufferReadBuffer(fbo_,GL_COLOR_ATTACHMENT0);
+            glNamedFramebufferDrawBuffer(down_fbo->getFBO(),GL_COLOR_ATTACHMENT0);
             glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
                 0,0,width_,height_,
                 0,0,width_,height_,
@@ -234,7 +218,7 @@ void MainWindow::paintGL() {
         glBindFramebuffer(GL_FRAMEBUFFER,0);
         glClearColor(0.1f,0.6f,0.3f,1);
         glClear(GL_COLOR_BUFFER_BIT);
-        if ( thisData->fbo ) {copy_function(thisData->fbo.get()); }
+        if ( thisData->fbo ) {  }
         return;
     }
 
@@ -257,7 +241,7 @@ void MainWindow::paintGL() {
     glUseProgram(thisData->program);
     glBindVertexArray(thisData->vao);
     glDrawArrays(GL_TRIANGLES,0,3);
-    return copy_function(fbo);
+    return  ;
 }
 
 void MainWindow::initializeGL() {
