@@ -3,6 +3,14 @@
 #include <QDebug>
 #include <cassert>
 #include <QTimer>
+// vec3, vec4, ivec4, mat4
+#include <glm/glm.hpp>
+// translate, rotate, scale, perspective
+#include <glm/gtc/matrix_transform.hpp>
+// glm::to_string
+#include <glm/gtx/string_cast.hpp>
+// glm::value_ptr
+#include <glm/gtc/type_ptr.hpp>
 
 class SimpleFrameBuffer {
     NOCOPY_GLTOOL(SimpleFrameBuffer);
@@ -71,6 +79,7 @@ public:
 
     int getWidth() const { return width_; }
     int getHeight()const { return height_; }
+    GLuint getColor0()const { return color0_texture_; }
     GLuint getFBO() const { return fbo_; }
     bool isValid() const { return isOK&&(fbo_); }
     void drawBuffer() const{
@@ -165,8 +174,6 @@ public:
                 GL_LINEAR
                 );
 
-            glNamedFramebufferReadBuffer(fbo_,GL_COLOR_ATTACHMENT0);
-            glNamedFramebufferDrawBuffer(down_fbo->getFBO(),GL_COLOR_ATTACHMENT0);
             glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
                 0,0,width_,height_,
                 0,0,width_,height_,
@@ -183,20 +190,120 @@ class MainWindow::__ThisData {
 public:
     unsigned int timerStamp=0;
     bool isResize=false;
-    GLuint program = 0;
     GLuint vao = 0;
+    GLuint vao_cube_data_buffer=0;
+    GLuint vao_cube_index_buffer=0;
+    GLuint frame_program=0;/*gen a texture*/
+    GLuint cube_program=0;/*draw texture to cube*/
+    glm::mat4 mvp_matrix;
 
     std::shared_ptr<SimpleMultiFrameBuffer> fbo;
 
     __ThisData(){
+        glCreateBuffers(1,&vao_cube_index_buffer);
+        glCreateBuffers(1,&vao_cube_data_buffer);
         glCreateVertexArrays(1,&vao);
-        program = createProgram({
-            {GL_VERTEX_SHADER,readGLSLFile("glsl:SimpleMultiSampleFramebuffer.v.vert") },
-            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:SimpleMultiSampleFramebuffer.f.frag")}
+        frame_program = createProgram({
+            {GL_VERTEX_SHADER,readGLSLFile("glsl:BaseMultiSampleFramebuffer.frame.vert") },
+            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:BaseMultiSampleFramebuffer.frame.frag")}
         });
+        cube_program = createProgram({
+            {GL_VERTEX_SHADER,readGLSLFile("glsl:BaseMultiSampleFramebuffer.cube.vert") },
+            {GL_FRAGMENT_SHADER,readGLSLFile("glsl:BaseMultiSampleFramebuffer.cube.frag")}
+        });
+
+        constexpr static const GLuint vertex_indices[] =
+        {
+            0, 1, 2,
+            2, 1, 3,
+            2, 3, 4,
+            4, 3, 5,
+            4, 5, 6,
+            6, 5, 7,
+            6, 7, 0,
+            0, 7, 1,
+            6, 0, 2,
+            2, 4, 6,
+            7, 5, 3,
+            7, 3, 1
+        };
+
+        /* cube data */
+        constexpr static const GLfloat vertex_data[] =
+        {
+            // Position                 Tex Coord
+            -0.25f, -0.25f,  0.25f,      0.0f, 1.0f,
+            -0.25f, -0.25f, -0.25f,      0.0f, 0.0f,
+             0.25f, -0.25f, -0.25f,      1.0f, 0.0f,
+
+             0.25f, -0.25f, -0.25f,      1.0f, 0.0f,
+             0.25f, -0.25f,  0.25f,      1.0f, 1.0f,
+            -0.25f, -0.25f,  0.25f,      0.0f, 1.0f,
+
+            0.25f, -0.25f, -0.25f,      0.0f, 0.0f,
+            0.25f,  0.25f, -0.25f,      1.0f, 0.0f,
+            0.25f, -0.25f,  0.25f,      0.0f, 1.0f,
+
+            0.25f,  0.25f, -0.25f,      1.0f, 0.0f,
+            0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+            0.25f, -0.25f,  0.25f,      0.0f, 1.0f,
+
+             0.25f,  0.25f, -0.25f,      1.0f, 0.0f,
+            -0.25f,  0.25f, -0.25f,      0.0f, 0.0f,
+             0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+
+            -0.25f,  0.25f, -0.25f,      0.0f, 0.0f,
+            -0.25f,  0.25f,  0.25f,      0.0f, 1.0f,
+             0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+
+            -0.25f,  0.25f, -0.25f,      1.0f, 0.0f,
+            -0.25f, -0.25f, -0.25f,      0.0f, 0.0f,
+            -0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+
+            -0.25f, -0.25f, -0.25f,      0.0f, 0.0f,
+            -0.25f, -0.25f,  0.25f,      0.0f, 1.0f,
+            -0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+
+            -0.25f,  0.25f, -0.25f,      0.0f, 1.0f,
+             0.25f,  0.25f, -0.25f,      1.0f, 1.0f,
+             0.25f, -0.25f, -0.25f,      1.0f, 0.0f,
+
+             0.25f, -0.25f, -0.25f,      1.0f, 0.0f,
+            -0.25f, -0.25f, -0.25f,      0.0f, 0.0f,
+            -0.25f,  0.25f, -0.25f,      0.0f, 1.0f,
+
+            -0.25f, -0.25f,  0.25f,      0.0f, 0.0f,
+             0.25f, -0.25f,  0.25f,      1.0f, 0.0f,
+             0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+
+             0.25f,  0.25f,  0.25f,      1.0f, 1.0f,
+            -0.25f,  0.25f,  0.25f,      0.0f, 1.0f,
+            -0.25f, -0.25f,  0.25f,      0.0f, 0.0f,
+        };
+
+        glNamedBufferData(vao_cube_index_buffer,sizeof(vertex_indices),vertex_indices,GL_STATIC_DRAW);
+        glNamedBufferData(vao_cube_data_buffer,sizeof(vertex_data),vertex_data,GL_STATIC_DRAW);
+
+        glVertexArrayElementBuffer(vao,vao_cube_index_buffer);
+
+        glEnableVertexArrayAttrib(vao,0);
+        glVertexArrayVertexBuffer(vao,0,vao_cube_data_buffer,0,sizeof(GLfloat[5]));
+        glVertexArrayAttribFormat(vao,0,3,GL_FLOAT,false,0);
+        glVertexArrayAttribBinding(vao,0,0);
+
+        glEnableVertexArrayAttrib(vao,1);
+        glVertexArrayAttribFormat(vao,1,2,GL_FLOAT,false,sizeof(GLfloat[3]) );
+        glVertexArrayAttribBinding(vao,1,0);
+
+        mvp_matrix[0][0]=2;
+        mvp_matrix[1][1]=2;
+        mvp_matrix[2][2]=2;
     }
     ~__ThisData(){
-        glDeleteProgram(program);
+        glDeleteBuffers(1,&vao_cube_index_buffer);
+        glDeleteBuffers(1,&vao_cube_data_buffer);
+        glDeleteProgram(cube_program);
+        glDeleteProgram(frame_program);
         glDeleteVertexArrays(1,&vao);
     }
 };
@@ -211,15 +318,34 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::paintGL() {
+
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_DEPTH_TEST);
+    auto clear_view=[]() {
+        glBindFramebuffer(GL_FRAMEBUFFER,0);
+        glClearColor(0.1f,0.6f,0.3f,1);
+        glClearDepth(1);
+        glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT );
+    };
+
+    auto draw_window=[this,clear_view]( 
+        std::shared_ptr<SimpleMultiFrameBuffer> & fbo_ 
+        ) {
+        clear_view();
+        auto fbo=fbo_->downSample();
+        if ( fbo ) {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER,fbo->getFBO());
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
+            glBlitFramebuffer(0,0,fbo->getWidth(),fbo->getHeight(),0,0,
+                width(),height(),GL_COLOR_BUFFER_BIT,GL_LINEAR);
+        }
+    };
 
     const auto _fbo=thisData->fbo;
     if ( thisData->isResize ) {
-        glBindFramebuffer(GL_FRAMEBUFFER,0);
-        glClearColor(0.1f,0.6f,0.3f,1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        if ( thisData->fbo ) {  }
-        return;
+        if (thisData->fbo) { return draw_window(thisData->fbo); }
+        return clear_view();
     }
 
     if ((bool(thisData->fbo)==false)||
@@ -231,17 +357,38 @@ void MainWindow::paintGL() {
     }
 
     auto * fbo=thisData->fbo.get();
-    if ((fbo==nullptr)||(fbo->isValid()==false)) { return;/*???*/ }
+    if ((fbo==nullptr)||(fbo->isValid()==false)) { return clear_view();/*???*/ }
 
     glBindFramebuffer(GL_FRAMEBUFFER,fbo->getFBO());
     fbo->drawBuffer();
     glClearColor(0.1f,0.6f,0.8f,1);
     glClearDepth(1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    glUseProgram(thisData->program);
-    glBindVertexArray(thisData->vao);
-    glDrawArrays(GL_TRIANGLES,0,3);
-    return  ;
+    
+    /* draw frame */
+    glUseProgram( thisData->frame_program );
+    glBindVertexArray( thisData->vao );
+    glDrawArrays( GL_TRIANGLES, 0 , 3);
+
+    /*get texture*/
+    auto fbo_texture_=fbo->downSample();
+
+    /* draw cube */
+    glClearColor(0.1f,0.6f,0.3f,1);
+    glClearDepth(1);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_CULL_FACE);
+    glUseProgram( thisData->cube_program );
+    glBindVertexArray( thisData->vao );
+    glBindTextureUnit( 0 ,fbo_texture_->getColor0() );
+    glDrawArrays(GL_TRIANGLES,0,36);
+    glDisable(GL_CULL_FACE);
+
+    /*free texture*/
+    fbo_texture_.reset();
+
+    return  draw_window(thisData->fbo);
 }
 
 void MainWindow::initializeGL() {
@@ -249,6 +396,7 @@ void MainWindow::initializeGL() {
         setSimpleCallbackFunction();
         const_cast<__ThisData * &>(thisData)=new __ThisData;
         assert(thisData);
+        startTimer(333);
     }
 }
 
@@ -267,6 +415,20 @@ void MainWindow::resizeGL(int w, int h) {
 
 void MainWindow::timerEvent(QTimerEvent *e) {
     QGLWidget::timerEvent(e);
+
+    auto rand_function=[]() ->GLfloat { return (rand()%1000)/2223.5f; };
+    auto r_x=glm::rotate( glm::mat4(),rand_function(),glm::vec3(1,0,0));
+    auto r_y=glm::rotate( glm::mat4(),rand_function(),glm::vec3(0,1,0));
+    auto r_z=glm::rotate( glm::mat4(),rand_function(),glm::vec3(0,0,1));
+    
+    thisData->mvp_matrix*=r_z;
+    thisData->mvp_matrix*=r_x;
+    thisData->mvp_matrix*=r_y;
+    
+    glProgramUniformMatrix4fv(thisData->cube_program,0,1,false,
+        glm::value_ptr( thisData->mvp_matrix )
+        );
+
     updateGL();
 }
 

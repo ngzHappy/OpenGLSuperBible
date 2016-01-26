@@ -1,11 +1,17 @@
 ﻿#version 450
 
+in layout(location = 0) vec4 inPosition ;
+in layout(location = 1) vec2 inUV ;
+
+uniform layout( location = 0 ) mat4 mvp ;
+
+out vec2 texture_uv ;
+
 void main(){
-    switch(gl_VertexID){
-        case 0:gl_Position = vec4(-0.5,-0.5,0,1);break;
-        case 1:gl_Position = vec4( 0.5,-0.5,0,1);break;
-        case 2:gl_Position = vec4( 0,   0.5,0,1);break;
-    }
+
+    gl_Position = mvp * inPosition;
+    texture_uv = inUV ; 
+
 }
 
 /*

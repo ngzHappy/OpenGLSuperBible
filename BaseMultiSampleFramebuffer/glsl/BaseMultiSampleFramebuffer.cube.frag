@@ -1,11 +1,14 @@
 ﻿#version 450
 
-out layout(location=0) vec4 color0 ;
-out layout(location=1) vec4 color1 ;
+out vec4 color0 ;
+
+in vec2 texture_uv ;
+uniform layout(binding = 0) sampler2D texture_0;
 
 void main(){
-    color0 = vec4( 0.6,0.2,0.1,1);
-    color1 = vec4( 0.6,0.1,0.1,1);
+    color0 = texture( texture_0 , texture_uv );
+	color0.x = color0.x * texture_uv.x ;
+	color0.y = color0.y * texture_uv.y ;
 }
 
 /*

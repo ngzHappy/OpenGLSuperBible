@@ -1,11 +1,9 @@
 ﻿#version 450
 
-out layout(location=0) vec4 color0 ;
-out layout(location=1) vec4 color1 ;
+out vec4 color0 ;
 
 void main(){
     color0 = vec4( 0.6,0.2,0.1,1);
-    color1 = vec4( 0.6,0.1,0.1,1);
 }
 
 /*
