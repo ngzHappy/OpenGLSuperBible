@@ -118,6 +118,7 @@ MainWindow::~MainWindow(){
 void MainWindow::paintGL() {
     /*defined the function to copy */
     auto copy_function=[this](auto * fbo) {
+        glMemoryBarrier(GL_ALL_BARRIER_BITS);
         glBindFramebuffer(GL_FRAMEBUFFER,0);
         glClearColor(0.1f,0.6f,0.3f,1);
         glClearDepth(1);

@@ -314,6 +314,7 @@ void MainWindow::paintGL() {
         clear_view();
         auto fbo=fbo_->downSample();
         if ( fbo ) {
+            glMemoryBarrier(GL_ALL_BARRIER_BITS);
             glBindFramebuffer(GL_READ_FRAMEBUFFER,fbo->getFBO());
             glReadBuffer(GL_COLOR_ATTACHMENT0);
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
@@ -348,6 +349,7 @@ void MainWindow::paintGL() {
     /* draw frame */
     glUseProgram( thisData->frame_program );
     glBindVertexArray( thisData->vao );
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
     glDrawArrays( GL_TRIANGLES, 0 , 3);
 
     /*get texture*/
@@ -362,6 +364,7 @@ void MainWindow::paintGL() {
     glUseProgram( thisData->cube_program );
     glBindVertexArray( thisData->vao );
     glBindTextureUnit( 0 ,fbo_texture_->getColor0() );
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
     glDrawArrays(GL_TRIANGLES,0,36);
     glDisable(GL_CULL_FACE);
 

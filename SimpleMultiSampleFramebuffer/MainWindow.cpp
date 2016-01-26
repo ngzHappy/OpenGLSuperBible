@@ -165,7 +165,7 @@ public:
     std::shared_ptr<SimpleFrameBuffer> downSample()const {
         auto down_fbo = std::make_shared<SimpleFrameBuffer>(width_,height_);
         if (down_fbo) {
-            
+            glMemoryBarrier(GL_ALL_BARRIER_BITS);
             glNamedFramebufferReadBuffer(fbo_,GL_COLOR_ATTACHMENT0);
             glNamedFramebufferDrawBuffer(down_fbo->getFBO(),GL_COLOR_ATTACHMENT0);
             glBlitNamedFramebuffer(fbo_,down_fbo->getFBO(),
@@ -190,7 +190,7 @@ public:
                 GL_DEPTH_BUFFER_BIT,
                 GL_NEAREST
                 );
-
+            glMemoryBarrier(GL_ALL_BARRIER_BITS);
         }
         return std::move(down_fbo);
     }
