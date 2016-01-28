@@ -8,6 +8,24 @@
 #include <glm/gtx/string_cast.hpp>
 // glm::value_ptr
 #include <glm/gtc/type_ptr.hpp>
+
+
+#if !defined(VALUE)
+#define VALUE( ... ) (/**/__VA_ARGS__/**/)
+#endif
+
+#if !defined(ROW_AS_COLUMN_MAT4X4)
+#define ROW_AS_COLUMN_MAT4X4( \
+_00,_01,_02,_03,\
+_10,_11,_12,_13,\
+_20,_21,_22,_23,\
+_30,_31,_32,_33 ) /**/\
+(_00),(_10),(_20),(_30),\
+(_01),(_11),(_21),(_31),\
+(_02),(_12),(_22),(_32),\
+(_03),(_13),(_23),(_33) /**/
+#endif
+
 int main(int argc, char *argv[])
 {
 
